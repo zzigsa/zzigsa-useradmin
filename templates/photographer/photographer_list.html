@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    {% for photographer in photographers %}
+        <h1>
+            <a href="{% url 'photographers:detail' photographer.pk %}">{{photographer.title}} - {{photographer.zzigsa}}작가</a>
+        </h1>
+    {% endfor %}
+        
+    <h5>
+        
+        {% if page.obj.has_previous %}
+            <a href="?page={{page.obj.previous_page_number}">Previous</a>
+        {% endif %}
+        
+        page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+        
+        {% if page.obj.has_next %}
+            <a href="?page={{page.obj.next_page_number}}">Next</a>
+        {% endif %}
+            
+    </h5>
+
+{% endblock content %}

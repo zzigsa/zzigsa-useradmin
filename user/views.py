@@ -78,7 +78,6 @@ def kakao_callback(request):
         token_json = token_request.json()
         error = token_json.get("error", None)
         if error is not None:
-            print("error exist")
             raise KakaoException()
         access_token = token_json.get("access_token")
         profile_request = requests.get(
@@ -93,10 +92,12 @@ def kakao_callback(request):
         properties = profile_json.get("properties")
         nickname = properties.get("nickname")
         try:
-            user = models.User.objects.get(email=email)
-            if user.login_method != models.User.LOGIN_KAKAO:
-                print("login method does not match")
-                raise KakaoException()
+            if email is None:
+                user = models.User.objects.get(username=nickname)
+            else:
+                user = models.User.objects.get(email=email)
+                if user.login_method != models.User.LOGIN_KAKAO:
+                    raise KakaoException()
         except models.User.DoesNotExist:
             if email is None:
                 user = models.User.objects.create(
@@ -107,7 +108,7 @@ def kakao_callback(request):
                 )
             else:
                 user = models.User.objects.create(
-                email=email,
+                # email=email,
                 username=email,
                 nickname=nickname,
                 login_method=models.User.LOGIN_KAKAO,

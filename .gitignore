@@ -10,6 +10,8 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media
+uploads/
+migrations/
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
@@ -127,6 +129,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-uploads/
+
 
 # End of https://www.gitignore.io/api/django

@@ -21,11 +21,21 @@ class User(AbstractUser):
         (ZZIGSA_DENIED, "Denied"),
     )
 
+    LOGIN_EMAIL = "email"
+    LOGIN_KAKAO = "kakao"
+
+    LOGIN_CHOICES = (
+        (LOGIN_EMAIL, "Email"),
+        (LOGIN_KAKAO, "Kakao"),
+    )
+
     nickname = models.CharField(max_length=20, unique=True)
     zzigsa = models.CharField(choices=ZZIGSA_CHOICES,  max_length=10, default=ZZIGSA_DENIED)
 
     email_verified = models.BooleanField(default=False)
-    email_secret = models.CharField(max_length=120, default="", blank=True)
+    email_secret = models.CharField(max_length=20, default="", blank=True)
+
+    login_method = models.CharField(max_length=50, choices=LOGIN_CHOICES, default=LOGIN_EMAIL)
 
     def verify_email(self):
         if self.email_verified is False:

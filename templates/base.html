@@ -13,6 +13,7 @@
         <a href="{% url 'user:logout' %}">log out</a>
     {% else %}
         <a href="{% url 'user:login' %}">log in</a>
+        <a href="{% url 'user:kakao-login' %}">kakao login</a>
         <a href="{% url 'user:signup' %}">sign up</a>
     {% endif %}
 

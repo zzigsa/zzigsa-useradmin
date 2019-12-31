@@ -1,0 +1,58 @@
+<!-- 마이페이지: 본인만 볼 수 있음
+    들어가야 할거 : 유저정보(이메일, 닉네임), 수정버튼 -> 닉네임, 패스워드수정
+                    일반유저면 구매이력(???), 해당찍사페이지 이동링크, 평점메기기
+                    찍사면 찍사 등록된 정보, 스케줄현황, 수정버튼 -> 지가 올렸던거 다 수정 가능하게,
+                        삭제버튼 -> 찍사페이지 등록했던 데이터 다 지우고 신분 변동하기
+                    아직 승인 검토중인애들이면 승인 검토중이라는걸 알릴것,
+                        신청서 보여주고 수정버튼 만들기 귀찮으니까 안만들래
+                        삭제버튼은 만들어야할듯. -->
+{% block content %}
+난 이렇게 틀만 잡았지만 준혁이가 그럴싸하게 만들어줄거라 믿어 ㅎ
+
+    <div>
+        <h1>회원 정보</h1>
+        <p>닉네임 : {{user_obj.nickname}}</p>
+        <p>
+            {% if user_obj.login_method == "email" %}
+            이메일 : {{user_obj.email}}
+            {% elif user_obj.login_method == "kakao" %}
+            카카오 가입자
+            {% endif %}
+        </p>
+        <p>
+            찍사 등급(?): 
+            
+            {% if user_obj.zzigsa == "approved" %}
+            찍사
+            {% elif user_obj.zzigsa == "not yet" %}
+            찍사 신청 완료 상태. 운영자가 승인을 검토중입니다.
+            {% else %}
+            찍사 아님
+            {% endif %}
+        </p>
+        <a href="{% url 'user:update' %}">회원정보 수정하기</a>
+    </div>
+
+    {% if user_obj.zzigsa == "approved" %}
+    <div>
+        <h1>찍사 등록 정보</h1>
+        <p>아직 구현 x</p>
+        <div><a href="#">찍사 프로필 관리</a></div>
+        <h1>스케줄 현황</h1>
+        <p>아직 구현 x</p>
+    </div>
+    {% elif user_obj.zzigsa == "not yet" %}
+    <div>
+        <h1>(대충 찍사 승인 검토중이라는 문구)</h1>
+        <p>찍사 신청한 내용 보이게 하면 좋을 듯</p>
+    </div>
+    {% elif user_obj.zzigsa == "denied" %}
+    <div>
+        <h1>구매 이력</h1>
+        <p>아직 구현 x</p>
+    </div>
+    {% endif %}
+    
+
+    if문마다 템플릿이 달라지니까 조각조각 따로 만들어서 include 하는게 좋을거같음
+{% endblock content %}

@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.shortcuts import render
 from . import models
 
@@ -14,6 +14,9 @@ class HomeView(ListView):
     context_object_name = "photographers"
 
 
-def photographer_detail(request, pk):
-    photographer = models.Photographer.objects.get(pk=pk)
-    return render(request, "photographer/detail.html", {'photographer': photographer})
+class PhotographerDetail(DetailView):
+    
+    """ Photographer Detail Definition """
+
+    model = models.Photographer
+    

@@ -10,6 +10,7 @@
     <a href="/">찍사</a>
     
     {% if user.is_authenticated %}
+        <a href="{{user.get_absolute_url}}">profile</a>
         <a href="{% url 'user:logout' %}">log out</a>
     {% else %}
         <a href="{% url 'user:login' %}">log in</a>

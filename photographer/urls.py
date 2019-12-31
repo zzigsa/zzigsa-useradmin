@@ -3,4 +3,4 @@ from . import views
 
 app_name = "photographers"
 
-urlpatterns = [path("<int:pk>", views.photographer_detail, name="detail")]
+urlpatterns = [path("<int:pk>", views.PhotographerDetail.as_view(), name="detail")]

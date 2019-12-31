@@ -7,7 +7,7 @@ class Photo(core_models.TimeStampedModel):
 
     """ Photo Model Definition """
 
-    file = models.ImageField(upload_to="portfolio")
+    portfolio = models.ImageField(upload_to="portfolio")
     zzigsa = models.ForeignKey("Photographer", related_name="photos", on_delete=models.CASCADE)
 
 
@@ -30,3 +30,11 @@ class Photographer(core_models.TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('photographers:detail', kwargs={'pk': self.pk})
+
+    def first_photo(self):
+        photo, = self.portfolio.all()[:1]
+        return photo.file.url
+
+    def get_next_four_photos(self):
+        photos = self.portfolio.all()[1:5]
+        return photos

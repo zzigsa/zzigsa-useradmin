@@ -1,19 +1,20 @@
 import os
 import requests
-from django.views.generic.edit import FormView
+from django.contrib.auth.views import PasswordChangeView
+from django.views.generic import FormView, DetailView, UpdateView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.base import ContentFile # FileField 쓸 때 필요한거 아직은 안쓰임
-from . import forms, models
+from django.contrib.messages.views import SuccessMessageMixin
+from . import forms, models, mixins
 
 # Create your views here.
 
-class LoginView(FormView):
+class LoginView(mixins.LoggedOutOnlyView, FormView):
 
     template_name = "user/login.html"
     form_class = forms.LoginForm
-    success_url = reverse_lazy("core:home")
 
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
@@ -23,12 +24,20 @@ class LoginView(FormView):
             login(self.request, user)
         return super().form_valid(form)
 
+    def get_success_url(self):
+        next_arg = self.request.GET.get("next")
+        if next_arg is not None:
+            return next_arg
+        else:
+            return reverse("core:home")
+
+
 def log_out(request):
     logout(request)
     return redirect(reverse("core:home"))
 
 
-class SignUpView(FormView):
+class SignUpView(mixins.LoggedOutOnlyView, FormView):
     
     template_name = "user/signup.html"
     form_class = forms.SignUpForm
@@ -108,7 +117,7 @@ def kakao_callback(request):
                 )
             else:
                 user = models.User.objects.create(
-                # email=email,
+                email=email,
                 username=email,
                 nickname=nickname,
                 login_method=models.User.LOGIN_KAKAO,
@@ -118,3 +127,45 @@ def kakao_callback(request):
         return redirect(reverse("core:home"))
     except KakaoException:
         return redirect(reverse("user:login"))
+
+
+class UserProfileView(DetailView):
+
+    model = models.User
+    context_object_name = "user_obj"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["hello"] = "Hello!"
+        return context
+
+
+class UpdateProfileView(mixins.LoggedInOnlyView, SuccessMessageMixin, UpdateView):
+    
+    model = models.User
+    template_name = "user/update-profile.html"
+    fields = ("nickname",)
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    # 플레이스홀더 만드는 법
+    # def get_form(self, form_class=None):
+    #     form = super().get_form(form_class=form_class)
+    #     form.fields['nickname'].widget.attrs = {"placeholder": "닉네임"}
+    #     return form
+
+    success_message = "Profile Updated"
+
+class UpdatePassword(
+    mixins.EmailLoginOnlyView,
+    mixins.LoggedInOnlyView,
+    SuccessMessageMixin,
+    PasswordChangeView
+):
+    
+    template_name = "user/update-password.html"
+    success_message = "Password updated"
+    
+    def get_success_url(self):
+        return self.request.user.get_absolute_url()

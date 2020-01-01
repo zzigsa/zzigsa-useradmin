@@ -8,7 +8,7 @@ class CustomUserAdmin(UserAdmin):
 
     """Custom User Admin"""
 
-    list_display = ("nickname", "email_verified", "email_secret", "login_method") + UserAdmin.list_display
+    list_display = ("nickname","zzigsa" , "email_verified", "email_secret", "login_method") + UserAdmin.list_display
 
     list_filter = UserAdmin.list_filter + ("zzigsa",)
 

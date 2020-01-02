@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from user import mixins as user_mixins
 from . import models, forms
+from .filters import ZzigsaFilter
 
 # Create your views here.
 class HomeView(ListView):
@@ -18,6 +19,11 @@ class HomeView(ListView):
     ordering = "created"
     context_object_name = "photographers"
 
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        zzigsa_filtered_list = ZzigsaFilter(self.request.GET, queryset=qs)
+        return zzigsa_filtered_list.qs
+
 
 class PhotographerDetail(DetailView):
     
@@ -26,7 +32,7 @@ class PhotographerDetail(DetailView):
     model = models.Photographer
 
 
-class EditPhotographerView(user_mixins.LoggedInOnlyView,UpdateView):
+class EditPhotographerView(user_mixins.LoggedInOnlyView, UpdateView):
 
     model = models.Photographer
     template_name = "photographer/photographer_edit.html"
@@ -91,3 +97,9 @@ class ApplyZzigsaView(user_mixins.LoggedInOnlyView, FormView):
 
     form_class = forms.ApplyZzigsaForm
     template_name = "photographer/zzigsa_create.html"
+
+    def form_valid(self, form):
+        pk = kwargs.get("pk")
+        form.save(pk)
+        messages.success(self.request, "찍사 신청되었습니다")
+        return redirect(reverse("photographers:detail", kwargs={"pk": pk}))

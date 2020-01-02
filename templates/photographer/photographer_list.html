@@ -3,9 +3,14 @@
 {% block content %}
     
     {% for photographer in photographers %}
-        <h1>
-            <a href="{% url 'photographers:detail' photographer.pk %}">{{photographer.title}} - {{photographer.zzigsa}}작가</a>
-        </h1>
+        {% if photographer.zzigsa.zzigsa == "approved" %}
+            <h1>
+                <a href="{% url 'photographers:detail' photographer.pk %}">{{photographer.title}} - {{photographer.zzigsa}}작가</a>
+            </h1>
+            <img src="{{photographer.profile.url}}" alt="">
+            <img src="{{photographer.first_photo}}" alt="">
+        {% endif %}
+            
     {% endfor %}
         
     <h5>

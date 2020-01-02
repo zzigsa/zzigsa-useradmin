@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from user import mixins as user_mixins
 from . import models, forms
-from .filters import ZzigsaFilter
 
 # Create your views here.
 class HomeView(ListView):
@@ -19,10 +18,7 @@ class HomeView(ListView):
     ordering = "created"
     context_object_name = "photographers"
 
-    def get_queryset(self):
-        qs = self.model.objects.all()
-        zzigsa_filtered_list = ZzigsaFilter(self.request.GET, queryset=qs)
-        return zzigsa_filtered_list.qs
+
 
 
 class PhotographerDetail(DetailView):
@@ -87,7 +83,7 @@ class AddPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin, FormView):
     form_class = forms.CreatePhotoForm
 
     def form_valid(self, form):
-        pk = kwargs.get("pk")
+        pk = self.kwargs.get("pk")
         form.save(pk)
         messages.success(self.request, "Photo Uploaded")
         return redirect(reverse("photographers:photos", kwargs={"pk": pk}))
@@ -98,8 +94,9 @@ class ApplyZzigsaView(user_mixins.LoggedInOnlyView, FormView):
     form_class = forms.ApplyZzigsaForm
     template_name = "photographer/zzigsa_create.html"
 
-    def form_valid(self, form, *args, **kwargs):
-        pk = kwargs.get("pk")
-        form.save(pk)
+    def form_valid(self, form):
+        photographer = form.save()
+        photographer.zzigsa = self.request.user
+        photographer.save()
         messages.success(self.request, "찍사 신청되었습니다")
-        return redirect(reverse("photographers:detail", kwargs={"pk": pk}))
+        return redirect(reverse("photographers:detail", kwargs={"pk": photographer.pk}))

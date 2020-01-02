@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <br>
+    <a href="{% url 'photographers:add-photo' photographer.pk %}">Add Photo</a>
+    <br>
+    {% for photo in photographer.photos.all %}
+        <img src="{{photo.file.url}}" alt="">
+        <a href="{% url 'photographers:delete-photo' photographer.pk photo.pk %}">Delete</a>
+    {% endfor %}
+    <br>
+    <a href="{% url 'photographers:edit' photographer.pk %}">Back to Edit page</a>
+
+        
+{% endblock %}

@@ -5,6 +5,7 @@ from django.views.generic import FormView, DetailView, UpdateView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile # FileField 쓸 때 필요한거 아직은 안쓰임
 from django.contrib.messages.views import SuccessMessageMixin
 from . import forms, models, mixins
@@ -166,6 +167,24 @@ class UpdatePassword(
     
     template_name = "user/update-password.html"
     success_message = "Password updated"
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["old_password"].widget.attrs = {"placeholder": "Current Password"}
+        form.fields["new_password1"].widget.attrs = {"placeholder": "New password"}
+        form.fields["new_password2"].widget.attrs = {"placeholder": "Confirm new password"}
+        return form
+
     
     def get_success_url(self):
         return self.request.user.get_absolute_url()
+
+
+
+@login_required
+def switch_hosting(request):
+    try:
+        del request.session["is_hosting"]
+    except KeyError:
+        request.session["is_hosting"] = True
+    return redirect(reverse("core:home"))

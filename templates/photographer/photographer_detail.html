@@ -1,10 +1,34 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+    {% if photographer.zzigsa == user %}
+    <a href="{% url 'photographers:edit' photographer.pk %}">Edit</a>
+
+    {% endif %}
+
     <h2>{{photographer.title}}</h2>
     <h3>{{photographer.zzigsa}}작가</h3>
+    <img src="{{photographer.profile.url}}" alt="">
     <h4>{{photographer.introduction}}</h4>
     <p>{{photographer.description}}</p>
+    <p>사용 카메라: {{photographer.equip}}</p>
+    <img src="{{photographer.equip.url}}" alt="">
+    <p>작가 sns: {{photographer.sns}}</p>
     
+    <!-- <div style="width: auto; height: auto; background-size: auto; background-image: url({{photographer.first_photo}}); "></div>
+    {% for photo in photographer.get_next_four_photos %}
+        <div style="width: auto; height: auto; background-image: url({{photo.file.url}});"></div>
+    {% endfor %} -->
+
+    <img src="{{photographer.first_photo}}">
+    
+    {% for photo in photographer.get_next_four_photos %}
+    <img src="{{photo.file.url}}" alt="">
+
+    {% endfor %}
+
+    
+
 
 {% endblock %}

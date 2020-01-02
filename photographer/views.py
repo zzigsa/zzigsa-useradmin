@@ -98,7 +98,7 @@ class ApplyZzigsaView(user_mixins.LoggedInOnlyView, FormView):
     form_class = forms.ApplyZzigsaForm
     template_name = "photographer/zzigsa_create.html"
 
-    def form_valid(self, form):
+    def form_valid(self, form, *args, **kwargs):
         pk = kwargs.get("pk")
         form.save(pk)
         messages.success(self.request, "찍사 신청되었습니다")

@@ -11,7 +11,7 @@ django-dotenv==1.4.2
 django-haystack==2.8.1
 django-imagekit==4.0.2
 django-js-asset==1.2.2
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 idna==2.8
 imageio==2.5.0
 networkx==2.3
